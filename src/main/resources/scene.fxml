@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="452.0" prefWidth="1007.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="solver.Controller">
+    <HBox layoutX="14.0" layoutY="14.0" prefHeight="430.0" prefWidth="805.0" spacing="5.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+        <VBox prefHeight="432.0" prefWidth="443.0" spacing="5.0">
+            <TableView fx:id="pointsTable" prefHeight="200.0" prefWidth="200.0">
+                <columns>
+                    <TableColumn fx:id="numberColumn" prefWidth="75.0" text="№" />
+                    <TableColumn fx:id="XColumn" prefWidth="75.0" text="X" />
+                    <TableColumn fx:id="YColumn" prefWidth="75.0" text="Y" />
+                </columns>
+            </TableView>
+            <HBox prefHeight="36.0" prefWidth="443.0">
+                <Button mnemonicParsing="false" onAction="#clearPointsList" text="Clear Table" />
+            </HBox>
+            <Label text="Add Point" />
+            <HBox prefHeight="34.0" prefWidth="390.0" spacing="5.0">
+                <Label prefHeight="26.0" prefWidth="44.0" text="X =" textAlignment="CENTER">
+               <font>
+                  <Font name="Arial" size="12.0" />
+               </font></Label>
+                <TextField fx:id="addX" prefHeight="26.0" prefWidth="117.0" promptText="X" />
+                <Label prefHeight="26.0" prefWidth="36.0" text="Y =" textAlignment="CENTER" />
+                <TextField fx:id="addY" prefHeight="26.0" prefWidth="118.0" promptText="Y" />
+                <Button mnemonicParsing="false" onAction="#addPoint" text="Add point" />
+            </HBox>
+            <Label text="Get Y by X" />
+            <HBox prefHeight="33.0" prefWidth="390.0" spacing="5.0">
+                <Label prefHeight="26.0" prefWidth="36.0" text="X =">
+               <font>
+                  <Font name="Arial" size="12.0" />
+               </font></Label>
+                <TextField fx:id="getX" promptText="X" />
+                <Button mnemonicParsing="false" onAction="#getYByX" text="Get Y" />
+            </HBox>
+            <Label fx:id="getY" prefHeight="26.0" prefWidth="437.0" text="Y =" textAlignment="CENTER" />
+         <Label fx:id="errorLabel" text="Error" textFill="RED">
+            <font>
+               <Font name="Arial" size="12.0" />
+            </font></Label>
+        </VBox>
+        <LineChart fx:id="functionChart" prefHeight="432.0" prefWidth="536.0" title="Function Plots">
+            <xAxis>
+                <CategoryAxis label="X" side="BOTTOM" />
+            </xAxis>
+            <yAxis>
+                <NumberAxis side="LEFT" />
+            </yAxis>
+        </LineChart>
+    </HBox>
+</AnchorPane>
