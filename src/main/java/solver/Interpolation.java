@@ -1,19 +1,25 @@
 package solver;
 
-import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
 public class Interpolation {
 
+    private static final DecimalFormat df = new DecimalFormat("0", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
+
+    public static String formatToPrecision(double x, int precision) {
+        df.setMaximumFractionDigits(precision);
+        return df.format(x);
+    }
+
     static double[][] getDiffTable(double[] x, double[][] y) {
 
         for (int j = 1; j < x.length; j++) {
             for (int i = 0; i < x.length - j; i++) {
                 y[i][j] = (y[i + 1][j - 1] - y[i][j - 1]) / (x[i + j] - x[i]);
-                System.out.println(String.format("y[%d][%d] = (%f - %f) / (%f - %f)",
-                        i, j, y[i + 1][j - 1], y[i][j - 1], x[i + j], x[i]));
+//                System.out.println(String.format("y[%d][%d] = (%f - %f) / (%f - %f)",
+//                        i, j, y[i + 1][j - 1], y[i][j - 1], x[i + j], x[i]));
             }
         }
         return y;
@@ -22,7 +28,7 @@ public class Interpolation {
     static double getNthTerm(int n, double value, double[] x) {
         double term = 1f;
         for (int i = 0; i < n; i++) {
-            System.out.print("*(" + value + " - " + x[i] + ")");
+//            System.out.print("*(" + value + " - " + x[i] + ")");
             term *= value - x[i];
         }
         return term;
@@ -30,9 +36,9 @@ public class Interpolation {
 
     static double getInterpolationY(double value, double[][] differences, double[] x) {
         double y = differences[0][0];
-        System.out.print("y = " + y);
+//        System.out.print("y = " + y);
         for (int i = 1; i < x.length; i++) {
-            System.out.print(" + " + differences[0][i]);
+//            System.out.print(" + " + differences[0][i]);
             y += differences[0][i] * getNthTerm(i, value, x);
         }
         return y;
@@ -40,8 +46,6 @@ public class Interpolation {
 
 
     static void printDiffTable(double[][] y, int n) {
-        DecimalFormat df = new DecimalFormat("0", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
-        df.setRoundingMode(RoundingMode.HALF_UP);
         df.setMaximumFractionDigits(5);
 
         for (int i = 0; i < n; i++) {
@@ -66,10 +70,7 @@ public class Interpolation {
 
         printDiffTable(y, x.length);
 
-        DecimalFormat df = new DecimalFormat("#.##");
-        df.setRoundingMode(RoundingMode.HALF_UP);
-
-        for (double i = x[0]; i <= x[x.length - 1]; i+=1) {
+        for (double i = x[0]; i <= x[x.length - 1]; i += 1) {
             System.out.println("\nValue at " + df.format(i) + " is "
                     + df.format(getInterpolationY(i, y, x)));
         }
