@@ -6,38 +6,40 @@ import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
 public class Interpolation {
-    static float proterm(int i, float value, float[] x) {
-        float pro = 1;
-        for (int j = 0; j < i; j++) {
-            pro = pro * (value - x[j]);
-        }
-        return pro;
-    }
 
-    // Function for calculating
-// divided difference table
-    static void dividedDiffTable(float[] x, float[][] y, int n) {
-        for (int i = 1; i < n; i++) {
-            for (int j = 0; j < n - i; j++) {
-                y[j][i] = (y[j][i - 1] - y[j + 1][i - 1]) / (x[j] - x[i + j]);
+    static double[][] getDiffTable(double[] x, double[][] y) {
+
+        for (int j = 1; j < x.length; j++) {
+            for (int i = 0; i < x.length - j; i++) {
+                y[i][j] = (y[i + 1][j - 1] - y[i][j - 1]) / (x[i + j] - x[i]);
+                System.out.println(String.format("y[%d][%d] = (%f - %f) / (%f - %f)",
+                        i, j, y[i + 1][j - 1], y[i][j - 1], x[i + j], x[i]));
             }
         }
+        return y;
     }
 
-    // Function for applying Newton's
-// divided difference formula
-    static float applyFormula(float value, float[] x, float[][] y, int n) {
-        float sum = y[0][0];
-
-        for (int i = 1; i < n; i++) {
-            sum += (proterm(i, value, x) * y[0][i]);
+    static double getNthTerm(int n, double value, double[] x) {
+        double term = 1f;
+        for (int i = 0; i < n; i++) {
+            System.out.print("*(" + value + " - " + x[i] + ")");
+            term *= value - x[i];
         }
-        return sum;
+        return term;
     }
 
-    // Function for displaying
-// divided difference table
-    static void printDiffTable(float[][] y, int n) {
+    static double getInterpolationY(double value, double[][] differences, double[] x) {
+        double y = differences[0][0];
+        System.out.print("y = " + y);
+        for (int i = 1; i < x.length; i++) {
+            System.out.print(" + " + differences[0][i]);
+            y += differences[0][i] * getNthTerm(i, value, x);
+        }
+        return y;
+    }
+
+
+    static void printDiffTable(double[][] y, int n) {
         DecimalFormat df = new DecimalFormat("0", DecimalFormatSymbols.getInstance(Locale.ENGLISH));
         df.setRoundingMode(RoundingMode.HALF_UP);
         df.setMaximumFractionDigits(5);
@@ -50,35 +52,26 @@ public class Interpolation {
         }
     }
 
-    // Driver Function
     public static void main(String[] args) {
-        // number of inputs given
-        int n = 4;
-        float value, sum;
-        float[][] y = new float[10][10];
-        float[] x = {5, 6, 9, 11};
+        double value = 11;
+        double[][] y = new double[10][10];
+        double[] x = {5, 6, 9, 11};
 
-        // y[][] is used for divided difference
-        // table where y[][0] is used for input
         y[0][0] = 12;
         y[1][0] = 13;
         y[2][0] = 14;
         y[3][0] = 16;
 
-        // calculating divided difference table
-        dividedDiffTable(x, y, n);
+        getDiffTable(x, y);
 
-        // displaying divided difference table
-        printDiffTable(y, n);
+        printDiffTable(y, x.length);
 
-        // value to be interpolated
-        value = 11;
-
-        // printing the value
         DecimalFormat df = new DecimalFormat("#.##");
         df.setRoundingMode(RoundingMode.HALF_UP);
 
-        System.out.println("\nValue at " + df.format(value) + " is "
-                + df.format(applyFormula(value, x, y, n)));
+        for (double i = x[0]; i <= x[x.length - 1]; i+=1) {
+            System.out.println("\nValue at " + df.format(i) + " is "
+                    + df.format(getInterpolationY(i, y, x)));
+        }
     }
 }

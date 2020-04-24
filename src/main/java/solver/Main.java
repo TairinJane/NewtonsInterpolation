@@ -11,7 +11,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("/scene.fxml"));
-        primaryStage.setTitle("Newton's Approximation");
+        primaryStage.setTitle("Newton's interpolation");
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
     }

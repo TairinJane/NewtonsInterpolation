@@ -2,7 +2,6 @@ package solver;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
@@ -15,9 +14,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.StackPane;
 import javafx.util.Pair;
 import org.mariuszgromada.math.mxparser.Expression;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class Controller {
 
