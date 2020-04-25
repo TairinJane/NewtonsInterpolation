@@ -6,64 +6,59 @@
 <?import javafx.scene.text.*?>
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="678.0" prefWidth="1007.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="solver.Controller">
-    <VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0"
-          AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+    <VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
         <HBox prefHeight="580.0" prefWidth="987.0" spacing="5.0">
             <VBox prefHeight="432.0" prefWidth="443.0" spacing="5.0">
                 <TableView fx:id="pointsTable" prefHeight="343.0" prefWidth="439.0">
                     <columns>
-                        <TableColumn fx:id="numberColumn" prefWidth="75.0" text="№"/>
-                        <TableColumn fx:id="XColumn" prefWidth="75.0" text="X"/>
-                        <TableColumn fx:id="YColumn" prefWidth="75.0" text="Y"/>
+                        <TableColumn fx:id="XColumn" prefWidth="169.7999973297119" text="X" />
+                        <TableColumn fx:id="YColumn" minWidth="6.20001220703125" prefWidth="254.79998779296875" text="Y" />
                     </columns>
                 </TableView>
                 <HBox prefHeight="36.0" prefWidth="443.0">
-                    <Button mnemonicParsing="false" onAction="#clearPointsList" text="Clear Table"/>
+                    <Button mnemonicParsing="false" onAction="#clearPointsList" text="Clear Table" />
                 </HBox>
-                <Label text="Add Point"/>
+                <Label text="Add Point" />
                 <HBox prefHeight="34.0" prefWidth="390.0" spacing="5.0">
-                    <Label prefHeight="26.0" prefWidth="44.0" text="X =" textAlignment="CENTER">
-                        <font>
-                            <Font name="Arial" size="12.0"/>
-                        </font>
-                    </Label>
-                    <TextField fx:id="addX" prefHeight="26.0" prefWidth="117.0" promptText="X"/>
-                    <Label prefHeight="26.0" prefWidth="36.0" text="Y =" textAlignment="CENTER"/>
-                    <TextField fx:id="addY" prefHeight="26.0" prefWidth="118.0" promptText="Y"/>
-                    <Button mnemonicParsing="false" onAction="#addPoint" text="Add point"/>
+                    <Label prefHeight="26.0" prefWidth="35.0" text="X =" textAlignment="CENTER" />
+                    <TextField fx:id="addX" prefHeight="26.0" prefWidth="112.0" promptText="X" />
+                    <Label prefHeight="26.0" prefWidth="29.0" text="Y =" textAlignment="CENTER" />
+                    <TextField fx:id="addY" prefHeight="26.0" prefWidth="110.0" promptText="Y" />
+                    <Button mnemonicParsing="false" onAction="#addPoint" text="Add" />
+               <Button mnemonicParsing="false" onAction="#updatePoint" text="Update" />
                 </HBox>
-                <Label text="Get Y by X"/>
+                <Label text="Get Y by X" />
                 <HBox prefHeight="33.0" prefWidth="390.0" spacing="5.0">
-                    <Label prefHeight="26.0" prefWidth="36.0" text="X =">
+                    <Label prefHeight="26.0" prefWidth="32.0" text="X =">
                         <font>
-                            <Font name="Arial" size="12.0"/>
+                            <Font name="Arial" size="12.0" />
                         </font>
                     </Label>
-                    <TextField fx:id="getX" promptText="X"/>
-                    <Button mnemonicParsing="false" onAction="#getYByX" text="Get Y"/>
+                    <TextField fx:id="getX" prefHeight="26.0" prefWidth="130.0" promptText="X" />
+                    <Button mnemonicParsing="false" onAction="#getYByX" text="Get Y" />
                 </HBox>
-                <Label fx:id="getY" prefHeight="26.0" prefWidth="437.0" text="Y =" textAlignment="CENTER"/>
-                <Label fx:id="errorLabel" text="Error" textFill="RED"/>
+                <Label fx:id="getY" prefHeight="26.0" prefWidth="437.0" text="Y =" textAlignment="CENTER" />
+                <Label fx:id="errorLabel" text="Error" textFill="RED" />
             </VBox>
-            <AnchorPane fx:id="chartBox" prefHeight="580.0" prefWidth="547.0">
-                <LineChart prefHeight="580.0" prefWidth="536.0" title="Function Plots" AnchorPane.bottomAnchor="0.0"
-                           AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <HBox fx:id="chartBox" prefHeight="580.0" prefWidth="547.0">
+                <LineChart prefHeight="580.0" prefWidth="536.0" title="Function Plots">
                     <xAxis>
-                        <CategoryAxis label="X" side="BOTTOM"/>
+                        <CategoryAxis label="X" side="BOTTOM" />
                     </xAxis>
                     <yAxis>
-                        <NumberAxis side="LEFT"/>
+                        <NumberAxis side="LEFT" />
                     </yAxis>
                 </LineChart>
-            </AnchorPane>
+            </HBox>
         </HBox>
         <HBox prefHeight="36.0" prefWidth="987.0" spacing="5.0">
-            <Label prefHeight="26.0" prefWidth="78.0" text="Data sets:" textAlignment="CENTER"/>
-            <Button mnemonicParsing="false" onAction="#pickFunction" text="Empty"/>
-            <Button mnemonicParsing="false" onAction="#pickFunction" text="2*sin(x)"/>
-            <Button mnemonicParsing="false" onAction="#pickFunction" text="x^2 + 8x - 14"/>
-            <Button mnemonicParsing="false" onAction="#pickFunction" text="Random"/>
+            <Label prefHeight="26.0" prefWidth="78.0" text="Data sets:" textAlignment="CENTER" />
+            <Button mnemonicParsing="false" onAction="#pickFunction" text="Empty" />
+            <Button mnemonicParsing="false" onAction="#pickFunction" text="2*sin(x)" />
+            <Button mnemonicParsing="false" onAction="#pickFunction" text="x^3 + 8x - 14" />
+         <Button mnemonicParsing="false" onAction="#pickFunction" text="(3x^5 - 12x)/(x^2 + 2)" />
+            <Button mnemonicParsing="false" onAction="#pickFunction" text="Random" />
         </HBox>
-        <Label fx:id="functionLabel" text="Current function: user"/>
+        <Label fx:id="functionLabel" text="Current function: user" />
     </VBox>
 </AnchorPane>

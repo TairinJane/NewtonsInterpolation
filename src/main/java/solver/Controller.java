@@ -1,24 +1,21 @@
 package solver;
 
-import com.sun.javafx.charts.Legend;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.util.Pair;
 
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
 import java.util.function.Function;
 
 public class Controller {
@@ -32,7 +29,7 @@ public class Controller {
     public TextField getX;
     public Label getY;
     public Label errorLabel;
-    public AnchorPane chartBox;
+    public HBox chartBox;
     public Label functionLabel;
 
     private ObservableList<Pair<Double, Double>> pointsList;
@@ -49,8 +46,9 @@ public class Controller {
         functionsMap = new HashMap<>();
         functionsMap.put("Empty", null);
         functionsMap.put("2*sin(x)", x -> 2 * Math.sin(x));
-        functionsMap.put("x^2 + 8x - 14", x -> Math.pow(x, 2) + 8 * x - 14);
+        functionsMap.put("x^3 + 8x - 14", x -> Math.pow(x, 3) + 8 * x - 14);
         functionsMap.put("Random", x -> Math.random() * 50 - 25);
+        functionsMap.put("(3x^5 - 12x)/(x^2 + 2)", x -> (3 * Math.pow(x, 5) - 12 * x) / (x * x + 2));
         pointsList = FXCollections.observableArrayList();
         XColumn.setCellValueFactory(new PropertyValueFactory<>("key"));
         YColumn.setCellValueFactory(new PropertyValueFactory<>("value"));
@@ -60,17 +58,38 @@ public class Controller {
 
     public void addPoint() {
         try {
-            double x = Double.parseDouble(addX.getText());
+            double x = Double.parseDouble(addX.getText().trim().replaceAll(",", "."));
             errorLabel.setText("");
             if (pointsList.stream().noneMatch(o -> o.getKey().equals(x))) {
-                pointsList.add(new Pair<>(x, Double.parseDouble(addY.getText())));
+                pointsList.add(new Pair<>(x, Double.parseDouble(addY.getText().trim().replaceAll(",", "."))));
 
                 if (pointsList.size() > 1) {
                     updateChart();
                 }
                 System.out.println("Add point");
 
-            } else errorLabel.setText("Point with x = " + x + " already exists");
+            } else errorLabel.setText("Point with x = " + x + " is already exists");
+
+        } catch (NumberFormatException e) {
+            errorLabel.setText("Invalid values");
+        }
+    }
+
+    public void updatePoint() {
+        try {
+            double x = Double.parseDouble(addX.getText().trim().replaceAll(",", "."));
+            errorLabel.setText("");
+            Pair<Double, Double> pair = pointsList.stream().filter(o -> o.getKey().equals(x)).findAny().orElse(null);
+            if (pair != null) {
+                pointsList.remove(pair);
+                pointsList.add(new Pair<>(x, Double.parseDouble(addY.getText().trim().replaceAll(",", "."))));
+
+                if (pointsList.size() > 1) {
+                    updateChart();
+                }
+                System.out.println("Update point");
+
+            } else errorLabel.setText("Point with x = " + x + " doesn't exist");
 
         } catch (NumberFormatException e) {
             errorLabel.setText("Invalid values");
@@ -224,19 +243,20 @@ public class Controller {
             double a, b, step = 1;
             switch (currentFunctionString) {
                 case "2*sin(x)":
-                    a = -3 * Math.PI;
-                    b = 3 * Math.PI;
-                    step = Math.PI / 4;
+                    a = Math.floor(Math.random() * 3 - 4) * Math.PI;
+                    b = Math.ceil(Math.random() * 3 + 1) * Math.PI;
+                    step = Math.PI / Math.round(Math.random() * 3 + 1.5);
                     break;
-                case "x^2 + 8x - 14":
-                    a = -10;
-                    b = 10;
-                    step = 1;
+                case "x^3 + 8x - 14":
+                case "(3x^5 - 12x)/(x^2 + 2)":
+                    a = Math.floor(Math.random() * 10 - 11);
+                    b = Math.ceil(Math.random() * 10 + 10);
+                    step = Math.round((b - a) / (Math.random() * 5 + 5));
                     break;
                 case "Random":
-                    a = Math.floor(Math.random() * 10 - 20);
-                    b = Math.ceil(Math.random() * 10 + 20);
-                    step = Math.round((b - a) / (Math.random() * 10 + 5));
+                    a = Math.floor(Math.random() * 10 - 11);
+                    b = Math.ceil(Math.random() * 10 + 1);
+                    step = Math.round((b - a) / (Math.random() * 5 + 2));
                     break;
                 default:
                     a = -10;
