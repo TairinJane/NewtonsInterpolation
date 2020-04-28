@@ -21,7 +21,6 @@ import java.util.function.Function;
 public class Controller {
 
     public TableView<Pair<Double, Double>> pointsTable;
-    public TableColumn<Pair<Double, Double>, Integer> numberColumn;
     public TableColumn<Pair<Double, Double>, Double> XColumn;
     public TableColumn<Pair<Double, Double>, Double> YColumn;
     public TextField addX;
@@ -31,6 +30,9 @@ public class Controller {
     public Label errorLabel;
     public HBox chartBox;
     public Label functionLabel;
+    public TextField leftLimit;
+    public TextField rightLimit;
+    public TextField stepField;
 
     private ObservableList<Pair<Double, Double>> pointsList;
     private double[] xTable;
@@ -45,10 +47,11 @@ public class Controller {
         currentFunctionString = null;
         functionsMap = new HashMap<>();
         functionsMap.put("Empty", null);
-        functionsMap.put("2*sin(x)", x -> 2 * Math.sin(x));
-        functionsMap.put("x^3 + 8x - 14", x -> Math.pow(x, 3) + 8 * x - 14);
+        functionsMap.put("sin(x)", Math::sin);
+        functionsMap.put("x^3", x -> Math.pow(x, 3));
         functionsMap.put("Random", x -> Math.random() * 50 - 25);
-        functionsMap.put("(3x^5 - 12x)/(x^2 + 2)", x -> (3 * Math.pow(x, 5) - 12 * x) / (x * x + 2));
+        functionsMap.put("x^2", x -> Math.pow(x, 2));
+        functionsMap.put("abs(x)", Math::abs);
         pointsList = FXCollections.observableArrayList();
         XColumn.setCellValueFactory(new PropertyValueFactory<>("key"));
         YColumn.setCellValueFactory(new PropertyValueFactory<>("value"));
@@ -114,12 +117,18 @@ public class Controller {
             diffTable[i][0] = sortedList.get(i).getValue();
         }
 
+        double step = (Math.ceil(xTable[xTable.length - 1]) - Math.floor(xTable[0])) / 30;
+        if (step <= 0) step = 0.5;
+        double a = Math.floor(xTable[0] - step);
+        double b = Math.ceil(xTable[xTable.length - 1] + step);
+        System.out.println(a + " " + b + " " + step);
+
         Interpolation.getDiffTable(xTable, diffTable);
-        LineChart<Number, Number> chart = drawInterpolationPlot();
+        LineChart<Number, Number> chart = drawInterpolationPlot(a, b, step);
 
         if (currentFunction != null) {
             if (currentFunctionString.equals("Random")) drawFunctionPlot(xTable, diffTable, chart);
-            else drawFunctionPlot(currentFunction, xTable[0], xTable[xTable.length - 1], chart);
+            else drawFunctionPlot(currentFunction, a, b, chart);
         }
 
         for (int i = 0; i < xTable.length; i++) {
@@ -127,7 +136,7 @@ public class Controller {
         }
     }
 
-    private LineChart<Number, Number> drawFunctionPlot(double[] x, double[][] y, LineChart<Number, Number> chart) {
+    private void drawFunctionPlot(double[] x, double[][] y, LineChart<Number, Number> chart) {
         XYChart.Series<Number, Number> series = new XYChart.Series<>();
         series.setName(currentFunctionString);
         ObservableList<XYChart.Data<Number, Number>> data = series.getData();
@@ -151,10 +160,9 @@ public class Controller {
 
         System.out.println("Function plot");
 
-        return chart;
     }
 
-    private LineChart<Number, Number> drawFunctionPlot(Function<Double, Double> function, double a, double b, LineChart<Number, Number> chart) {
+    private void drawFunctionPlot(Function<Double, Double> function, double a, double b, LineChart<Number, Number> chart) {
         XYChart.Series<Number, Number> series = new XYChart.Series<>();
         series.setName(currentFunctionString);
         ObservableList<XYChart.Data<Number, Number>> data = series.getData();
@@ -179,19 +187,17 @@ public class Controller {
 
         System.out.println("Function plot");
 
-        return chart;
     }
 
-    private LineChart<Number, Number> drawInterpolationPlot() {
+    private LineChart<Number, Number> drawInterpolationPlot(double a, double b, double step) {
         XYChart.Series<Number, Number> series = new XYChart.Series<>();
         series.setName("Interpolation plot");
         ObservableList<XYChart.Data<Number, Number>> data = series.getData();
 
-        double step = (Math.ceil(xTable[xTable.length - 1]) - Math.floor(xTable[0])) / 30;
         double min = Double.MAX_VALUE;
         double max = Double.MIN_VALUE;
 
-        for (double i = Math.floor(xTable[0]); i <= Math.ceil(xTable[xTable.length - 1]); i += step) {
+        for (double i = a; i <= b; i += step) {
             double y = Interpolation.getInterpolationY(i, diffTable, xTable);
             data.add(new XYChart.Data<>(i, y));
             if (Math.ceil(y) > max) max = Math.ceil(y);
@@ -200,7 +206,7 @@ public class Controller {
 
         NumberAxis yAxis = new NumberAxis(min - (max - min) / 10, max + (max - min) / 10, (max - min) / 10);
         yAxis.setLabel("y");
-        NumberAxis xAxis = new NumberAxis(Math.floor(xTable[0]), Math.ceil(xTable[xTable.length - 1]), step * 10);
+        NumberAxis xAxis = new NumberAxis(a, b, step * 10);
         xAxis.setLabel("x");
         LineChart<Number, Number> chart = new LineChart<>(xAxis, yAxis);
         chart.getData().add(series);
@@ -238,36 +244,22 @@ public class Controller {
     }
 
     private void updatePointsListForFunction() {
-        clearPointsList();
-        if (currentFunction != null) {
-            double a, b, step = 1;
-            switch (currentFunctionString) {
-                case "2*sin(x)":
-                    a = Math.floor(Math.random() * 3 - 4) * Math.PI;
-                    b = Math.ceil(Math.random() * 3 + 1) * Math.PI;
-                    step = Math.PI / Math.round(Math.random() * 3 + 1.5);
-                    break;
-                case "x^3 + 8x - 14":
-                case "(3x^5 - 12x)/(x^2 + 2)":
-                    a = Math.floor(Math.random() * 10 - 11);
-                    b = Math.ceil(Math.random() * 10 + 10);
-                    step = Math.round((b - a) / (Math.random() * 5 + 5));
-                    break;
-                case "Random":
-                    a = Math.floor(Math.random() * 10 - 11);
-                    b = Math.ceil(Math.random() * 10 + 1);
-                    step = Math.round((b - a) / (Math.random() * 5 + 2));
-                    break;
-                default:
-                    a = -10;
-                    b = 10;
-            }
+        try {
+            double a = Double.parseDouble(leftLimit.getText().trim().replaceAll(",", "."));
+            double b = Double.parseDouble(rightLimit.getText().trim().replaceAll(",", "."));
+            double step = Double.parseDouble(stepField.getText().trim().replaceAll(",", "."));
+            if (step > (b - a) / 2) throw new NumberFormatException();
+            errorLabel.setText("");
+            clearPointsList();
+            if (currentFunction != null) {
+                for (double i = a; i <= b; i += step) {
+                    pointsList.add(new Pair<>(i, currentFunction.apply(i)));
+                }
 
-            for (double i = a; i <= b; i += step) {
-                pointsList.add(new Pair<>(i, currentFunction.apply(i)));
+                updateChart();
             }
-
-            updateChart();
+        } catch (NumberFormatException e) {
+            errorLabel.setText("Invalid generation values");
         }
     }
 }
